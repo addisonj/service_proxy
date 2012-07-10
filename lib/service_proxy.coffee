@@ -16,13 +16,7 @@ makeDefaults = (options) ->
     requestOpts: options.requestOpts || {}
   }
 
-reqHasBody = (req) ->
-  switch req.method.toLowerCase()
-    when "get", "head", "del" then return true
-    when "post", "put" then return false
-    else throw new Error "I don't support HTTP #{req.method} method yet!"
-
-buildRequestObject = (req, hasBody, options) ->
+buildRequestObject = (req, options) ->
   {transformUrl, host, requestOpts} = options
 
   requestOpts = _.extend requestOpts, {
@@ -30,7 +24,7 @@ buildRequestObject = (req, hasBody, options) ->
     method: req.method.toLowerCase()
   }
 
-  requestOpts.body = req.body if hasBody
+  requestOpts.body = req.body if req.body?
 
   return requestOpts
 
@@ -41,16 +35,13 @@ handleError = (pipe, onError, req, res) ->
 proxy = (req, res, options) ->
   options = makeDefaults options
 
-  hasBody = reqHasBody
-  requestOpts = buildRequestObject req, hasBody, options
+  requestOpts = buildRequestObject req, options
 
-  pipe = null
-  if hasBody
-    pipe = req.pipe(request(requestOpts)).pipe res
-  else 
-    pipe = request(requestOpts).pipe res
+  remotePipe = req.pipe(request(requestOpts))
+  handleError remotePipe, options.onError, req, res
+  reqPipe = remotePipe.pipe res
+  handleError reqPipe, options.onError, req, res
 
-  handleError pipe, options.onError, req, res
   
 class ServiceProxy
   constructor: (options) ->
