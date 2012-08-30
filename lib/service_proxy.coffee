@@ -24,7 +24,7 @@ buildRequestObject = (req, options) ->
     method: req.method.toLowerCase()
   }
 
-  requestOpts.body = req.body if req.body?
+  requestOpts.body = req.body if req.body? and Object.keys(req.body).length > 0
 
   return requestOpts
 
@@ -37,7 +37,11 @@ proxy = (req, res, options) ->
 
   requestOpts = buildRequestObject req, options
 
-  remotePipe = req.pipe(request(requestOpts))
+  if requestOpts.body?
+    remotePipe = req.pipe(request(requestOpts))
+  else
+    remotePipe = request requestOpts
+
   handleError remotePipe, options.onError, req, res
   reqPipe = remotePipe.pipe res
   handleError reqPipe, options.onError, req, res
@@ -48,7 +52,7 @@ class ServiceProxy
     # add the properties onto us
     @savedOpts = makeDefaults options
 
-  proxy: (req, res, options) ->
+  proxy: (req, res, options) =>
     allOpts = _.extend @savedOpts, options
     proxy req, res, allOpts
 
