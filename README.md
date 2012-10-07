@@ -18,7 +18,7 @@ app.post '/service/resource', serviceController.proxy
 #serviceController.coffee
 ServiceProxy = require 'service_proxy'
 serviceProxy = new ServiceProxy {
-  host: "localhost:4001"
+  host: "http://localhost:4001"
   transformUrl: (host, path) ->
     return host + path.replace "/service", ""
   onError: (req, res) ->
