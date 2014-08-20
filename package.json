@@ -2,10 +2,10 @@
   "author": "addisonj <addisonj@gmail.com> (github.com/addisonj)",
   "name": "service_proxy",
   "description": "A small wrapper around request to handle proxying calls with nice error handling",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "main": "index.js",
   "engines": {
-    "node": "0.6.x"
+    "node": ">= 0.6.x"
   },
   "dependencies": {
     "request" : "2.16.x",
