@@ -1,3 +1,4 @@
+qs = require 'querystring'
 request = require 'request'
 _ = require 'underscore'
 
@@ -20,7 +21,7 @@ buildRequestObject = (req, options) ->
   {transformUrl, host, requestOpts} = options
 
   requestOpts = _.extend requestOpts, {
-    url: transformUrl host, req.url
+    url: transformUrl host, req.url + qs.stringify(req.query)
     method: req.method.toLowerCase()
   }
 
@@ -46,7 +47,6 @@ proxy = (req, res, options) ->
   reqPipe = remotePipe.pipe res
   handleError reqPipe, options.onError, req, res
 
-  
 class ServiceProxy
   constructor: (options) ->
     # add the properties onto us
