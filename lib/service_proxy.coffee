@@ -19,7 +19,7 @@ makeDefaults = (options) ->
 buildRequestObject = (req, options) ->
   {transformUrl, host, requestOpts} = options
 
-  requestOpts = _.extend requestOpts, {
+  requestOpts = _.extend {}, requestOpts, {
     url: transformUrl host, req.url
     method: req.method.toLowerCase()
   }
